@@ -56,7 +56,7 @@ class homePage extends StatelessWidget {
 
                            ListTile(
                             leading: Icon(Icons.water ,color: Colors.white),
-                            title: Text("Cloudy"
+                            title: Text("50%"
                                 ),
                           ),
                           
