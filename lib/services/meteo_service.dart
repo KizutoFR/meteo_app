@@ -6,7 +6,7 @@ import 'package:meteo_app/models/forecast_weather.dart';
 import 'package:meteo_app/models/meteo.dart';
 import 'package:geocoding/geocoding.dart';
 
-const apikey = '2c6cadc2d5b9838602202c41f354eff6';
+const apikey = 'd01be990c51591300af7620e6cc45221';
 
 Future<Meteo> getCurrentWeather(String name) async {
   List<Location> coords = await locationFromAddress(name);
@@ -20,7 +20,6 @@ Future<Meteo> getCurrentWeather(String name) async {
   );
   var response = await http.get(url);
   if(response.statusCode == 200) {
-    print(response.body);
     return Meteo.fromJson(jsonDecode(response.body));
   }
   return Future.error('No weather found for ${name}');
