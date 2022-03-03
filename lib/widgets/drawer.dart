@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:meteo_app/views/homepage.dart';
 import 'package:meteo_app/widgets/slide_route_animation.dart';
 import 'package:provider/provider.dart';
+import 'package:meteo_app/database/database.dart';
+import 'package:meteo_app/models/city.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerStateInfo with ChangeNotifier {
   int _currentDrawer = 0;
@@ -29,6 +32,7 @@ class MyDrawerState extends State<MyDrawer> {
   final TextEditingController _newCityController = TextEditingController();
 
   var _tapPosition;
+  List<City> _lists = [];
 
   MyDrawerState(this.currentPage);
 
@@ -36,6 +40,38 @@ class MyDrawerState extends State<MyDrawer> {
   void initState() {
     super.initState();
     _tapPosition = const Offset(0.0, 0.0);
+    _getCities();
+  }
+
+  void dispose() {
+    _newCityController.dispose();
+    super.dispose();
+  }
+
+  _getCities() async {
+    var tmp = await MeteoDatabase.instance.cities();
+    setState(() {
+      _lists = tmp;
+    });
+  }
+
+  _addNewCity() async {
+    var newCity = await MeteoDatabase.instance.addCity(City(name: _newCityController.text));
+    setState(() {
+      _lists.add(newCity);
+    });
+  }
+
+  _selectCity(name) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('lastCity', name);
+  }
+
+  _deleteCity(index) async {
+    await MeteoDatabase.instance.deleteCity(_lists[index].name);
+    setState(() {
+      _lists.removeAt(index);
+    });
   }
 
   void _storePosition(TapDownDetails details) {
@@ -73,6 +109,7 @@ class MyDrawerState extends State<MyDrawer> {
                 ),
                 onPressed: () {
                   setState(() {
+                    _addNewCity();
                     Navigator.pop(context);
                   });
                 },
@@ -87,7 +124,8 @@ class MyDrawerState extends State<MyDrawer> {
   Widget build(BuildContext context) {
     var currentDrawer = Provider.of<DrawerStateInfo>(context, listen: false).getCurrentDrawer;
     return Drawer(
-      child: ListView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           DrawerHeader(
             curve: Curves.bounceIn,
@@ -97,10 +135,6 @@ class MyDrawerState extends State<MyDrawer> {
                 end: Alignment.bottomLeft,
                 colors: [Color(0xffEFF0FF), Color(0xffC3D1FF)]
               ),
-              // image: DecorationImage(
-              //   image: AssetImage("assets/Acer.jpg"),
-              //   fit: BoxFit.cover
-              // ),
             ),
             child: Stack(
               children: [
@@ -144,47 +178,54 @@ class MyDrawerState extends State<MyDrawer> {
             endIndent: 20,
             color: Colors.grey,
           ),
-          GestureDetector(
-            child: ListTile(
-              leading: const Icon(Icons.location_city_rounded), 
-              title: Text(
-                "Lyon",
-                style: currentDrawer == 0
-                    ? const TextStyle(fontWeight: FontWeight.bold)
-                    : const TextStyle(fontWeight: FontWeight.normal),
-              ),
-              trailing: currentDrawer != 0 ? const Icon(Icons.arrow_forward_rounded) : null,
-              onTap: () {
-                Navigator.of(context).pop();
-                if (currentDrawer == 0) return;
-
-                Provider.of<DrawerStateInfo>(context, listen: false).setCurrentDrawer(0);
-
-                Navigator.of(context).pushReplacement(SlideRouteAnimation(page: const HomePage(city: "Lyon")));
-              },
-            ),
-            onTapDown: _storePosition,
-            onLongPress: () async {
-              final RenderBox overlay = Overlay.of(context)?.context.findRenderObject() as RenderBox;
-              await showMenu(
-                position: RelativeRect.fromRect(
-                  _tapPosition & Size(40, 40), // smaller rect, the touch area
-                  Offset.zero & overlay.size // Bigger rect, the entire screen
-                ),
-                context: context, 
-                items: <PopupMenuEntry>[
-                  PopupMenuItem(
-                    value: true,
-                    child: Row(
-                      children: const <Widget>[
-                        Icon(Icons.delete),
-                        Text("Delete"),
-                      ],
+          Expanded(
+            child: ListView.builder(
+              itemCount: _lists.length,
+              itemBuilder: (context, i) {
+                return GestureDetector(
+                  child: ListTile(
+                    leading: const Icon(Icons.location_city_rounded), 
+                    title: Text(
+                      _lists[i].name,
+                      style: currentDrawer == i
+                          ? const TextStyle(fontWeight: FontWeight.bold)
+                          : const TextStyle(fontWeight: FontWeight.normal),
                     ),
-                  )
-                ]
-              );
-            },
+                    trailing: currentDrawer != i ? const Icon(Icons.arrow_forward_rounded) : null,
+                    onTap: () {
+                      _selectCity(_lists[i].name);
+                      Navigator.of(context).pop();
+                      if (currentDrawer == i) return;
+                      Provider.of<DrawerStateInfo>(context, listen: false).setCurrentDrawer(i);
+                      Navigator.of(context).pushReplacement(SlideRouteAnimation(page: HomePage(city: _lists[i].name)));
+                    },
+                  ),
+                  onTapDown: _storePosition,
+                  onLongPress: () async {
+                    final RenderBox overlay = Overlay.of(context)?.context.findRenderObject() as RenderBox;
+                    await showMenu(
+                      position: RelativeRect.fromRect(
+                        _tapPosition & Size(40, 40), // smaller rect, the touch area
+                        Offset.zero & overlay.size // Bigger rect, the entire screen
+                      ),
+                      context: context, 
+                      items: <PopupMenuEntry>[
+                        PopupMenuItem(
+                          onTap: () => _deleteCity(i),
+                          value: true,
+                          child: Row(
+                            children: const <Widget>[
+                              Icon(Icons.delete),
+                              Text("Delete"),
+                            ],
+                          ),
+                        )
+                      ]
+                    );
+                  },
+                );
+              }
+            ),
           )
         ],
       ),

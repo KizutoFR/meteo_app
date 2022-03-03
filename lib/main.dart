@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meteo_app/services/meteo_service.dart';
 import 'package:meteo_app/views/homepage.dart';
 import 'package:meteo_app/widgets/drawer.dart';
 import 'package:provider/provider.dart';
@@ -17,10 +16,7 @@ class App extends StatelessWidget {
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Météo APP',
-        home: HomePage(city: "Lyon"),
-        routes: {
-          
-        },
+        home: HomePage(city: ""),
       ),
       providers: [
         ChangeNotifierProvider<DrawerStateInfo>(
