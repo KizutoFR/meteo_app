@@ -63,7 +63,7 @@ class home extends StatelessWidget {
                                             child: Padding(
                                               padding: EdgeInsets.only(right:8.0),
                                               child: Icon(Icons.cloud,
-                                                  color: Color.fromARGB(255, 211, 209, 209), size: 24),
+                                                  color: Color.fromARGB(166, 211, 209, 209), size: 24),
                                             ),
                                           ),
                                           TextSpan(
@@ -84,7 +84,7 @@ class home extends StatelessWidget {
                                               padding: EdgeInsets.only(right:8.0),
                                               child: Icon(
                                                 Icons.flag,
-                                                color: Color.fromARGB(255, 211, 209, 209), 
+                                                color: Color.fromARGB(166, 211, 209, 209), 
                                                 size: 24
                                               ),
                                             ),
@@ -107,7 +107,7 @@ class home extends StatelessWidget {
                                                 padding: EdgeInsets.only(right:8.0),
                                                 child: Icon(
                                                   Icons.water,
-                                                  color: Color.fromARGB(255, 211, 209, 209),
+                                                  color: Color.fromARGB(166, 211, 209, 209),
                                                   size: 24
                                                 ),
                                               ),
@@ -146,7 +146,7 @@ class home extends StatelessWidget {
                                                 WidgetSpan(
                                                   child: Icon(
                                                     Icons.arrow_downward,
-                                                    color: Color.fromARGB(255, 211, 209, 209),
+                                                    color: Color.fromARGB(131, 230, 229, 229),
                                                     size: 24
                                                   ),
                                                 ),
@@ -166,7 +166,7 @@ class home extends StatelessWidget {
                                                 WidgetSpan(
                                                   child: Icon(
                                                     Icons.arrow_upward,
-                                                    color: Color.fromARGB(255, 211, 209, 209), 
+                                                    color: Color.fromARGB(166, 211, 209, 209), 
                                                     size: 24
                                                   ),
                                                 ),
@@ -192,21 +192,12 @@ class home extends StatelessWidget {
                         SizedBox(
                           height: 160,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 25, top: 10),
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.only(left: 25, top: 10, right: 25),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
-                                hourCard(),
+                                hourCard(context,0xff7e92f7,Icons.wb_sunny_rounded),
+                                hourCard(context,0xff5b76fc,Icons.mode_night_rounded),
                               ],
                             ),
                           ),
