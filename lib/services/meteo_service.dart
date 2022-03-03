@@ -20,12 +20,26 @@ Future<Meteo> getCurrentWeather(String name) async {
   );
   var response = await http.get(url);
   if(response.statusCode == 200) {
-    Meteo meteo = Meteo.fromJson(jsonDecode(response.body));
-    return meteo;
+    print(response.body);
+    return Meteo.fromJson(jsonDecode(response.body));
   }
   return Future.error('No weather found for ${name}');
 }
 
-// Future<ForecastWeather> getForecastWeather(String name) async {
-
-// }
+Future<ForecastWeather> getForecastWeather(String name) async {
+  List<Location> coords = await locationFromAddress(name);
+  Uri url = Uri.https("api.openweathermap.org", '/data/2.5/forecast',
+    {
+      'lat': coords[0].latitude.toString(), 
+      'lon': coords[0].longitude.toString(), 
+      'lang': 'fr',
+      'cnt': '5',
+      'appid': apikey
+    }
+  );
+  var response = await http.get(url);
+  if(response.statusCode == 200) {
+    return ForecastWeather.fromJson(jsonDecode(response.body));
+  }
+  return Future.error('No forecast weather found for ${name}');
+}
