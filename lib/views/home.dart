@@ -201,9 +201,41 @@ class home extends StatelessWidget {
                               ],
                             ),
                           ),
-                        )
-                      ]
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 25, top: 25, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: const [
+                              Text(
+                                "Next 5 days",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff353D65)
                                 ),
+                              )
+                            ]
+                          ),
+                        ),
+                        IntrinsicHeight(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                dayCard(),
+                                dayCard(),
+                                dayCard(),
+                                dayCard(),
+                                dayCard(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ]
+                    ),
                     ),
                   ),
                 ],
