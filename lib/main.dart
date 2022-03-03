@@ -4,7 +4,11 @@ import 'package:meteo_app/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const App());
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    title: "Météo APP",
+    home: homepage(),
+  ));
 }
 
 class App extends StatelessWidget {
