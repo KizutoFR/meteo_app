@@ -20,8 +20,6 @@ Widget dayCard(ListHours element) {
     }
 
     return DateFormat('EEEE').format(date);
-    print(date);
-    return "ok";
   }
 
 
@@ -33,7 +31,7 @@ Widget dayCard(ListHours element) {
           color: Colors.white
         ),
         title: Text(_formatDate(element.dt), style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xff353D65)),),
-        trailing: Text("${_formatToDegree(element.main!.tempMin)}° / ${_formatToDegree(element.main!.tempMax)}°", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xffA2ACCD))),
+        trailing: Text("${_formatToDegree(element.main!.tempMin)} / ${_formatToDegree(element.main!.tempMax)}", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xffA2ACCD))),
       ),
       const Divider(
         height: 2,
