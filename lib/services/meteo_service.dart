@@ -32,7 +32,6 @@ Future<ForecastWeather> getForecastWeather(String name) async {
       'lat': coords[0].latitude.toString(), 
       'lon': coords[0].longitude.toString(), 
       'lang': 'fr',
-      'cnt': '5',
       'appid': apikey
     }
   );

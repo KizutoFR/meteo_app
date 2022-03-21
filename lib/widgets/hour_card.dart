@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-Widget hourCard(BuildContext context,int color,IconData meteoicons){
+Widget hourCard(BuildContext context, String value, int color,IconData meteoicons){
   return Padding(
     padding: const EdgeInsets.all(0.0),
     child: Container(
@@ -23,8 +23,8 @@ Widget hourCard(BuildContext context,int color,IconData meteoicons){
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: Text(
-                "13"+" h",
-                style: TextStyle(
+                value,
+                style: const TextStyle(
                   fontSize: 25,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
