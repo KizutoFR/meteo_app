@@ -42,9 +42,7 @@ class MyDrawerState extends State<MyDrawer> {
     super.initState();
     _tapPosition = const Offset(0.0, 0.0);
     _getCities();
-    if (!_addFirstCity) {
-      Provider.of<DrawerStateInfo>(context, listen: true).setCurrentDrawer(0);
-    }
+    print("ADD FIRST CITY ${_addFirstCity}");
   }
 
   void dispose() {
@@ -56,7 +54,16 @@ class MyDrawerState extends State<MyDrawer> {
     var cities = await MeteoDatabase.instance.cities();
     setState(() {
       _lists = cities;
+      if (cities.isEmpty) {
+        _addFirstCity = true;
+      } else {
+        _addFirstCity = false;
+      }
     });
+
+    if (!_addFirstCity) {
+      Provider.of<DrawerStateInfo>(context, listen: false).setCurrentDrawer(0);
+    }
   }
 
   _addNewCity() async {
@@ -67,7 +74,6 @@ class MyDrawerState extends State<MyDrawer> {
       } else {
         _addFirstCity = false;
       }
-      print("add first city ${_addFirstCity}");
       _lists.add(newCity);
     });
   }
