@@ -92,14 +92,14 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.transparent,
               elevation: 0.0,
             ),
-            body: !_haveCurrentCity 
-              ? Text("Veuillez choisir une ville dans le menu à gauche")
+            body: !_haveCurrentCity || city == '' 
+              ? const Center(child: Text("Veuillez choisir une ville dans le menu à gauche"))
               : FutureBuilder<Meteo>(
                 future: getCurrentWeather(city),
                 builder: (context, snapshot) {
                   if(snapshot.connectionState == ConnectionState.waiting){
-                    return Text("Loading...");
-                  } else if(snapshot.connectionState == ConnectionState.done){
+                    return const Text("Loading...");
+                  } else if(snapshot.connectionState == ConnectionState.done && snapshot.data != null){
                     return Container (
                       child: Row(
                         children: [
@@ -333,7 +333,7 @@ class _HomePageState extends State<HomePage> {
                       )
                   );
                   } else {
-                    return Text("Erreur");
+                    return const Center(child: Text("Une erreur s'est produite"));
                   }
                 }
               ),

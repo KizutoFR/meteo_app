@@ -7,7 +7,7 @@ import 'package:meteo_app/models/city.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerStateInfo with ChangeNotifier {
-  int _currentDrawer = 0;
+  int _currentDrawer = -1;
   int get getCurrentDrawer => _currentDrawer;
 
   void setCurrentDrawer(int drawer) {
@@ -23,7 +23,7 @@ class MyDrawer extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new MyDrawerState(currentPage);
+    return MyDrawerState(currentPage);
   }
 }
 
@@ -32,6 +32,7 @@ class MyDrawerState extends State<MyDrawer> {
   final TextEditingController _newCityController = TextEditingController();
 
   var _tapPosition;
+  bool _addFirstCity = true;
   List<City> _lists = [];
 
   MyDrawerState(this.currentPage);
@@ -41,6 +42,9 @@ class MyDrawerState extends State<MyDrawer> {
     super.initState();
     _tapPosition = const Offset(0.0, 0.0);
     _getCities();
+    if (!_addFirstCity) {
+      Provider.of<DrawerStateInfo>(context, listen: true).setCurrentDrawer(0);
+    }
   }
 
   void dispose() {
@@ -49,15 +53,21 @@ class MyDrawerState extends State<MyDrawer> {
   }
 
   _getCities() async {
-    var tmp = await MeteoDatabase.instance.cities();
+    var cities = await MeteoDatabase.instance.cities();
     setState(() {
-      _lists = tmp;
+      _lists = cities;
     });
   }
 
   _addNewCity() async {
     var newCity = await MeteoDatabase.instance.addCity(City(name: _newCityController.text));
     setState(() {
+      if (_lists.isEmpty) {
+        _addFirstCity = true;
+      } else {
+        _addFirstCity = false;
+      }
+      print("add first city ${_addFirstCity}");
       _lists.add(newCity);
     });
   }
@@ -68,6 +78,10 @@ class MyDrawerState extends State<MyDrawer> {
   }
 
   _deleteCity(index) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('lastCity') == _lists[index].name) {
+      prefs.remove('lastCity');
+    }
     await MeteoDatabase.instance.deleteCity(_lists[index].name);
     setState(() {
       _lists.removeAt(index);
