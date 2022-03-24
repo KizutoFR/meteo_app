@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                 future: getCurrentWeather(city),
                 builder: (context, snapshot) {
                   if(snapshot.connectionState == ConnectionState.waiting){
-                    return const Text("Loading...");
+                    return const Center(child: CircularProgressIndicator());
                   } else if(snapshot.connectionState == ConnectionState.done && snapshot.data != null){
                     return Container (
                       child: Row(
@@ -316,11 +316,11 @@ class _HomePageState extends State<HomePage> {
                                         future: getForecastWeather(city),
                                         builder: (ctx, snap) {
                                           if(snap.connectionState == ConnectionState.waiting) {
-                                            return Text("Loading...");
+                                            return CircularProgressIndicator();
                                           } else if (snap.connectionState == ConnectionState.done) {
                                             return getDayCards(snap.data!.list!);
                                           } else {
-                                            return Text("Erreur");
+                                            return const Text("Une erreur s'est produite");
                                           }                              
                                         }
                                       ),
