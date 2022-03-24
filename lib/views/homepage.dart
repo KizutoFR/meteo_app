@@ -316,7 +316,7 @@ class _HomePageState extends State<HomePage> {
                                         future: getForecastWeather(city),
                                         builder: (ctx, snap) {
                                           if(snap.connectionState == ConnectionState.waiting) {
-                                            return CircularProgressIndicator();
+                                            return const CircularProgressIndicator();
                                           } else if (snap.connectionState == ConnectionState.done) {
                                             return getDayCards(snap.data!.list!);
                                           } else {

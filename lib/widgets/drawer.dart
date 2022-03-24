@@ -52,8 +52,10 @@ class MyDrawerState extends State<MyDrawer> {
 
   _getCities() async {
     var cities = await MeteoDatabase.instance.cities();
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
       _lists = cities;
+      print("CITY ${prefs.getString('lastCity')} ${cities.length}");
       if (cities.isEmpty) {
         _addFirstCity = true;
       } else {
@@ -62,18 +64,17 @@ class MyDrawerState extends State<MyDrawer> {
     });
 
     if (!_addFirstCity) {
-      Provider.of<DrawerStateInfo>(context, listen: false).setCurrentDrawer(0);
+      Provider.of<DrawerStateInfo>(context, listen: false).setCurrentDrawer(_lists.indexWhere((element) => element.name == prefs.getString('lastCity')));
+    } else {
+      Provider.of<DrawerStateInfo>(context, listen: false).setCurrentDrawer(-1);
     }
   }
 
   _addNewCity() async {
     var newCity = await MeteoDatabase.instance.addCity(City(name: _newCityController.text));
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      if (_lists.isEmpty) {
-        _addFirstCity = true;
-      } else {
-        _addFirstCity = false;
-      }
+      Provider.of<DrawerStateInfo>(context, listen: false).setCurrentDrawer(_lists.indexWhere((element) => element.name == prefs.getString('lastCity')));
       _lists.add(newCity);
     });
   }
@@ -91,6 +92,11 @@ class MyDrawerState extends State<MyDrawer> {
     await MeteoDatabase.instance.deleteCity(_lists[index].name);
     setState(() {
       _lists.removeAt(index);
+      if (_lists.length <= 1) {
+        _addFirstCity = true;
+      } else {
+        _addFirstCity = false;
+      }
     });
   }
 
