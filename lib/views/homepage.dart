@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   String formatToSunHour(int? timestamp) {
-    DateTime date = new DateTime.fromMillisecondsSinceEpoch(timestamp! * 1000);
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp! * 1000);
     return date.hour.toString() + 'h' + date.minute.toString();
   }
 
@@ -87,11 +87,11 @@ class _HomePageState extends State<HomePage> {
 
       if (DateTime(date.year, date.month, date.day) != DateTime(now.year, now.month, now.day)) {
         if (index % 8 == 0) {
-          tabs.add(dayCard(element));
+          tabs.add(dayCard(element, _selectIcon));
         }
       }
     });
-    tabs.add(dayCard(list[list.length - 1]));
+    tabs.add(dayCard(list[list.length - 1], _selectIcon));
     if(tabs.isNotEmpty) {
       return Column(children: tabs);
     }
@@ -124,10 +124,12 @@ class _HomePageState extends State<HomePage> {
               : FutureBuilder<Meteo>(
                 future: getCurrentWeather(city),
                 builder: (context, snapshot) {
-                  if(snapshot.connectionState == ConnectionState.waiting){
-                    return const Center(child: CircularProgressIndicator());
-                  } else if(snapshot.connectionState == ConnectionState.done && snapshot.data != null){
-                    return Container (
+                  return AnimatedCrossFade(
+                    firstChild: const Center(child: CircularProgressIndicator()), 
+                    crossFadeState: snapshot.connectionState == ConnectionState.waiting ? CrossFadeState.showFirst : CrossFadeState.showSecond, 
+                    duration: const Duration(milliseconds: 500),
+                    secondChild: snapshot.connectionState == ConnectionState.done && snapshot.data != null ? (
+                      Container (
                       child: Row(
                         children: [
                           Expanded(
@@ -344,26 +346,30 @@ class _HomePageState extends State<HomePage> {
                                       FutureBuilder<ForecastWeather>(
                                         future: getForecastWeather(city),
                                         builder: (ctx, snap) {
-                                          if(snap.connectionState == ConnectionState.waiting) {
-                                            return CircularProgressIndicator();
-                                          } else if (snap.connectionState == ConnectionState.done) {
-                                            return getDayCards(snap.data!.list!);
-                                          } else {
-                                            return const Text("Une erreur s'est produite");
-                                          }                              
+                                          return AnimatedCrossFade(
+                                            firstChild: const CircularProgressIndicator(), 
+                                            crossFadeState: snap.connectionState == ConnectionState.waiting ? CrossFadeState.showFirst : CrossFadeState.showSecond, 
+                                            duration: const Duration(milliseconds: 500),
+                                            secondChild: snap.connectionState == ConnectionState.done ? (
+                                               getDayCards(snap.data!.list!)
+                                            ) : (
+                                              const Text("Une erreur s'est produite")
+                                            ), 
+                                          );                            
                                         }
                                       ),
                                   ),
-                              ]
+                                ]
+                              ),
+                              ),
                             ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        )
                       )
+                    ) : (
+                      const Center(child: Text("Une erreur s'est produite"))
+                    ), 
                   );
-                  } else {
-                    return const Center(child: Text("Une erreur s'est produite"));
-                  }
                 }
               ),
           drawer: MyDrawer(currentPage: widget.city),  

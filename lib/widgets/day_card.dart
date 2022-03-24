@@ -3,8 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:meteo_app/models/forecast_weather.dart';
 
-Widget dayCard(ListHours element) {
-
+Widget dayCard(ListHours element, _selectIcon) {
   
   String _formatToDegree(double? degree) {
     return (degree! - 273.15).round().toString() + "°";
@@ -26,10 +25,7 @@ Widget dayCard(ListHours element) {
   return Column(
     children: [
       ListTile(
-        leading: const Icon(
-          Icons.cloud,
-          color: Colors.white
-        ),
+        leading: Image.asset(_selectIcon(element.weather![0].main), width: 40, height: 40),
         title: Text(_formatDate(element.dt), style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xff353D65)),),
         trailing: Text("${_formatToDegree(element.main!.tempMin)} / ${_formatToDegree(element.main!.tempMax)}", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xffA2ACCD))),
       ),
