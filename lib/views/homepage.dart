@@ -31,6 +31,33 @@ class _HomePageState extends State<HomePage> {
     _checkForCurrentCity();
   }
 
+  String _selectIcon(String? meteo){
+    String fileName="";
+    switch (meteo) {
+      case "Thunderstorm":
+        fileName="orage";
+        break;
+      case "Drizzle":
+        fileName="bruine";
+        break;
+      case "Rain":
+        fileName="pluvieux";
+        break;
+      case "Snow":
+        fileName="neigeux";
+        break;
+      case "Clear":
+        fileName="ensoleille";
+        break;
+      case "Clouds":
+        fileName="nuageux";
+        break;
+      default:
+      fileName="venteux";
+    }
+    return "assets/${fileName}.png";
+  }
+
   _checkForCurrentCity() async {
     final prefs = await SharedPreferences.getInstance();
     final String? cityName = prefs.getString('lastCity');
@@ -133,13 +160,14 @@ class _HomePageState extends State<HomePage> {
                                             children: [
                                               RichText(
                                                 text: TextSpan(
+                                                  
                                                 children: [
-                                                  const WidgetSpan(
+                                                   WidgetSpan(
                                                     child: Padding(
-                                                      padding: EdgeInsets.only(right:8.0),
-                                                      child: Icon(Icons.cloud,
-                                                          color: Color.fromARGB(166, 211, 209, 209), size: 24),
+                                                      padding: const EdgeInsets.only(right:8.0),
+                                                      child: Image.asset(_selectIcon(snapshot.data!.weather![0].main),width: 40,height: 40,),
                                                     ),
+                                                    alignment: PlaceholderAlignment.middle,
                                                   ),
                                                   TextSpan(
                                                     text: "${snapshot.data!.weather![0].main}",
@@ -147,6 +175,7 @@ class _HomePageState extends State<HomePage> {
                                                       color: Colors.white,
                                                       height: 2,
                                                       fontSize: 20,
+                                                      
                                                     )
                                                   ),
                                                 ],),
@@ -316,7 +345,7 @@ class _HomePageState extends State<HomePage> {
                                         future: getForecastWeather(city),
                                         builder: (ctx, snap) {
                                           if(snap.connectionState == ConnectionState.waiting) {
-                                            return const CircularProgressIndicator();
+                                            return CircularProgressIndicator();
                                           } else if (snap.connectionState == ConnectionState.done) {
                                             return getDayCards(snap.data!.list!);
                                           } else {
